@@ -133,14 +133,20 @@ bool Path::FileExists(const String& path)
 String Path::Normalize(const String& path)
 {
 	char out[MAX_PATH];
-	realpath(*path, out);
+
+    char *ret = realpath(*path, out);
+    if (ret == 0) { // error occurred
+		Logf("Path::Normalize: realpath failed for path: %s", Logger::Severity::Warning, *path);
+        return path;
+    }
+
 	for(uint32 i = 0; i < MAX_PATH; i++)
 	{
 		if(out[i] == '\\')
 			out[i] = sep;
-		if (out[i] == '\0')
-			return out;
+		if (out[i] == '\0') break;
 	}
+
 	return out;
 }
 bool Path::IsAbsolute(const String& path)
