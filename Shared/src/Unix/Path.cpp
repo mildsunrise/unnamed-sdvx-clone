@@ -136,7 +136,7 @@ String Path::Normalize(const String& path)
 
     char *ret = realpath(*path, out);
     if (ret == 0) { // error occurred
-		Logf("Path::Normalize: realpath failed for path: %s", Logger::Severity::Warning, *path);
+		Logf("Path::Normalize: realpath failed for path %s: %s", Logger::Severity::Warning, *path, std::strerror(errno));
         return path;
     }
 
