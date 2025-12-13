@@ -17,6 +17,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <filesystem>
 // Convenience
 #define MAX_PATH PATH_MAX
 
@@ -132,13 +133,8 @@ bool Path::FileExists(const String& path)
 }
 String Path::Normalize(const String& path)
 {
-	char out[MAX_PATH];
-
-    char *ret = realpath(*path, out);
-    if (ret == 0) { // error occurred
-		Logf("Path::Normalize: realpath failed for path %s: %s", Logger::Severity::Warning, *path, std::strerror(errno));
-        return path; // skip normalization
-    }
+    auto s = std::filesystem::weakly_canonical(*path).string();
+	char *out = s.data();
 
 	for(uint32 i = 0; i < MAX_PATH; i++)
 	{
