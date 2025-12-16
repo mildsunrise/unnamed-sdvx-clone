@@ -80,23 +80,31 @@ public:
 	const Vector<String>& GetSwitchablePaths() const { return m_switchablePaths; }
 
 	/// Retrieves audio effect settings for a given button id
+	[[nodiscard]]
 	AudioEffect GetEffect(EffectType type) const;
 	/// Retrieves audio effect settings for a given filter effect id
+	[[nodiscard]]
 	AudioEffect GetFilter(EffectType type) const;
 
 	/// Get the timing of the first (non-event) object
+	[[nodiscard]]
 	MapTime GetFirstObjectTime(MapTime lowerBound) const;
 	/// Get the timing of the last (non-event) object
+	[[nodiscard]]
 	MapTime GetLastObjectTime() const;
 	/// Get the timing of the last object, including the event objects
+	[[nodiscard]]
 	MapTime GetLastObjectTimeIncludingEvents() const;
 
 	/// Measure -> Time
+	[[nodiscard]]
 	MapTime GetMapTimeFromMeasureInd(int measure) const;
 	/// Time -> Measure
+	[[nodiscard]]
 	int GetMeasureIndFromMapTime(MapTime time) const;
 
 	/// Computes the most frequently occuring BPM (to be used for MMod)
+	[[nodiscard]]
 	double GetModeBPM() const;
 	void GetBPMInfo(double& startBPM, double& minBPM, double& maxBPM, double& modeBPM) const;
 
@@ -104,30 +112,40 @@ public:
 	void ApplyShuffle(const std::array<int, 6>& swaps, bool flipLaser);
 
 	/// # of (4th-note) beats between the start and the end
+	[[nodiscard]]
 	float GetBeatCount(MapTime start, MapTime end, TimingPointsIterator hint) const;
+	[[nodiscard]]
 	float GetBeatCountWithScrollSpeedApplied(MapTime start, MapTime end, TimingPointsIterator hint) const;
 
+	[[nodiscard]]
 	inline float GetBeatCount(MapTime start, MapTime end) const
 	{
 		return GetBeatCount(start, end, GetTimingPoint(start));
 	}
 
+	[[nodiscard]]
 	inline float GetBeatCountWithScrollSpeedApplied(MapTime start, MapTime end) const
 	{
 		return GetBeatCountWithScrollSpeedApplied(start, end, GetTimingPoint(start));
 	}
 
-	const Objects& GetObjectStates() const { return m_objectStates; }
+	[[nodiscard]]
+	const Objects& GetObjectStates() const noexcept { return m_objectStates; }
 
-	ObjectsIterator GetFirstObjectState() const { return m_objectStates.begin(); }
-	ObjectsIterator GetEndObjectState() const { return m_objectStates.end(); }
+	[[nodiscard]]
+	ObjectsIterator GetFirstObjectState() const noexcept { return m_objectStates.begin(); }
+	[[nodiscard]]
+	ObjectsIterator GetEndObjectState() const noexcept { return m_objectStates.end(); }
 
-	bool HasObjectState() const { return !m_objectStates.empty(); }
+	[[nodiscard]]
+	bool HasObjectState() const noexcept { return !m_objectStates.empty(); }
 
-	const TimingPoints& GetTimingPoints() const { return m_timingPoints; }
+	[[nodiscard]]
+	const TimingPoints& GetTimingPoints() const noexcept { return m_timingPoints; }
 
-	TimingPointsIterator GetFirstTimingPoint() const { return m_timingPoints.begin(); }
-	TimingPointsIterator GetEndTimingPoint() const { return m_timingPoints.end(); }
+	[[nodiscard]]
+	TimingPointsIterator GetFirstTimingPoint() const noexcept { return m_timingPoints.begin(); }
+	TimingPointsIterator GetEndTimingPoint() const noexcept { return m_timingPoints.end(); }
 
 	/// Returns the latest timing point for given mapTime
 	inline TimingPointsIterator GetTimingPoint(MapTime mapTime) const

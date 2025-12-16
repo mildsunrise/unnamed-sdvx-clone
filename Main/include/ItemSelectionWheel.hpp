@@ -60,6 +60,7 @@ public:
 	~ItemSelectionWheel() {}
 
 
+	[[nodiscard]]
 	uint32 GetCurrentItemIndex() {
 		if (m_sortVec.empty())
 			return -1;
@@ -240,6 +241,7 @@ public:
 	}
 
 	// TODO this has a seperate behavior for normal song select
+	[[nodiscard]]
 	virtual int32 SelectLastItemIndex(bool isFiltered)
 	{
 		if (m_lastItemIndex == -1)
@@ -256,6 +258,7 @@ public:
 		return res;
 	}
 
+	[[nodiscard]]
 	int32 SelectItemByItemIndex(int32 itemIndex)
 	{
 		if (itemIndex < 0)
@@ -306,6 +309,7 @@ public:
 		}
 	}
 
+	[[nodiscard]]
 	SortType GetSortType() const
 	{
 		if (m_currentSort)
@@ -411,6 +415,7 @@ public:
 		m_SetCurrentItems();
 	}
 
+	[[nodiscard]]
 	DBIndex *GetSelection() const
 	{
 		ItemSelectIndex const *item = m_SourceCollection().Find(

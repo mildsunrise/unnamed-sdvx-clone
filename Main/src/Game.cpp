@@ -1118,7 +1118,7 @@ public:
 			g_application->ScriptError("gameplay", m_lua); \
 		} \
 		lua_pop(m_lua, 1); \
-		} while (0)
+		} while (false)
 
 			// Render Critical Line Base
 			lua_getglobal(m_lua, "render_crit_base");

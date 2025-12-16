@@ -15,9 +15,11 @@ public:
 	virtual void SetValue(float v) {
 		m_gauge = v;
 	}
+	[[nodiscard]]
 	virtual float GetValue() const {
 		return m_gauge;
 	};
+	[[nodiscard]]
 	virtual const std::array<float, 256>& GetSamples() const {
 		return m_samples;
 	}
@@ -25,12 +27,17 @@ public:
 	virtual void Update(MapTime currentTime);
 
 
+	[[nodiscard]]
 	virtual bool GetClearState() const = 0;
+	[[nodiscard]]
 	virtual const char* GetName() const = 0;
+	[[nodiscard]]
 	virtual GaugeType GetType() const = 0;
+	[[nodiscard]]
 	virtual uint32 GetOpts() const { return 0; };
 
 	// Returns true if the gauge should fail out the player
+	[[nodiscard]]
 	virtual bool FailOut() const {
 		return false;
 	};
@@ -54,8 +61,11 @@ public:
 	void NearHit();
 	void LongMiss();
 	void ShortMiss();
+	[[nodiscard]]
 	bool GetClearState() const;
+	[[nodiscard]]
 	const char* GetName() const;
+	[[nodiscard]]
 	GaugeType GetType() const;
 
 protected:
@@ -76,12 +86,17 @@ public:
 	bool Init(MapTotals mapTotals, uint16 total, MapTime length) override;
 	void LongMiss() override;
 	void ShortMiss() override;
+	[[nodiscard]]
 	bool GetClearState() const;
+	[[nodiscard]]
 	const char* GetName() const;
+	[[nodiscard]]
 	bool FailOut() const;
+	[[nodiscard]]
 	GaugeType GetType() const;
 
 protected:
+	[[nodiscard]]
 	float DrainMultiplier() const;
 };
 
@@ -90,7 +105,9 @@ public:
 	GaugePermissive(float gainRate = 16.f / 21.f, float missDrainPercent = 0.034f) :
 		GaugeHard(gainRate, missDrainPercent) {};
 protected:
+	[[nodiscard]]
 	const char* GetName() const;
+	[[nodiscard]]
 	GaugeType GetType() const;
 };
 
@@ -100,8 +117,10 @@ public:
 		GaugeHard(gainRate, missDrainPercent), m_level(level) {};
 	void LongMiss() override;
 	void ShortMiss() override;
+	[[nodiscard]]
 	uint32 GetOpts() const override;
-	float GetLevel() { return m_level; }
+	[[nodiscard]]
+	float GetLevel() const noexcept { return m_level; }
 protected:
 	float m_level;
 };
@@ -112,7 +131,9 @@ public:
 		GaugeWithLevel(level, gainRate, missDrainPercent) {};
 	bool Init(MapTotals mapTotals, uint16 total, MapTime length) override;
 	void NearHit() override;
+	[[nodiscard]]
 	const char* GetName() const;
+	[[nodiscard]]
 	GaugeType GetType() const;
 protected:
 	const float s_nearDrainPercent = 0.01f;

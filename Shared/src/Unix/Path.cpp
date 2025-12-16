@@ -134,7 +134,7 @@ bool Path::FileExists(const String& path)
 String Path::Normalize(const String& path)
 {
     auto s = std::filesystem::weakly_canonical(*path).string();
-	char *out = s.data();
+	char* out = s.data();
 
 	for(uint32 i = 0; i < MAX_PATH; i++)
 	{
