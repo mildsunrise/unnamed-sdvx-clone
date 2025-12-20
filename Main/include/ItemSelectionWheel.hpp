@@ -190,7 +190,7 @@ public:
 		if (m_randomVec.size() == 1) {
 			itemIndex = m_randomVec.back();
 		} else {
-			uint32 selection = Random::IntRange(0, (int32)m_randomVec.size() - 1);
+			uint32 selection = Random::IntRange(0, static_cast<int32>(m_randomVec.size()) - 1);
 			itemIndex = m_randomVec.at(selection);
 			m_randomVec[selection] = m_randomVec.back();
 		}
@@ -203,7 +203,7 @@ public:
 	{
 		for (const auto &it : m_SourceCollection())
 		{
-			if (m_getDBEntryFromItemIndex((const ItemSelectIndex)it.second)->id == (int32)id)
+			if (m_getDBEntryFromItemIndex((const ItemSelectIndex)it.second)->id == static_cast<int32>(id))
 			{
 				SelectItemByItemIndex(it.first);
 				break;
@@ -241,7 +241,6 @@ public:
 	}
 
 	// TODO this has a seperate behavior for normal song select
-	[[nodiscard]]
 	virtual int32 SelectLastItemIndex(bool isFiltered)
 	{
 		if (m_lastItemIndex == -1)
@@ -258,7 +257,6 @@ public:
 		return res;
 	}
 
-	[[nodiscard]]
 	int32 SelectItemByItemIndex(int32 itemIndex)
 	{
 		if (itemIndex < 0)

@@ -39,7 +39,6 @@ public:
     void RangeAdd(MapTime begin, MapTime end, double delta);
 
     /// Returns the value being extended.
-    [[nodiscard]]
     double Extend(MapTime time);
 
     [[nodiscard]]
