@@ -39,7 +39,6 @@ public:
 		m_start = std::chrono::high_resolution_clock::now();
 	}
 
-	[[nodiscard]]
 	template<typename dur> inline dur Duration() const
 	{
 		return std::chrono::duration_cast<dur>(std::chrono::high_resolution_clock::now() - m_start);
