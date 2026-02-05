@@ -281,7 +281,7 @@ int copyArchiveData(archive *ar, archive *aw)
 	size_t size;
 	la_int64_t offset;
 
-	for (;;)
+	while (true)
 	{
 		r = archive_read_data_block(ar, &buff, &size, &offset);
 		if (r == ARCHIVE_EOF)
@@ -338,7 +338,7 @@ void Application::m_unpackSkins()
 		bool singleDir = false;
 		bool otherFiles = false;
 
-		for (;;)
+		while (true)
 		{
 			res = archive_read_next_header(a, &entry);
 			if (res == ARCHIVE_EOF)

@@ -14,7 +14,8 @@ struct TimedEffect
 	explicit TimedEffect(float duration);
 	virtual ~TimedEffect() = default;
 	void Reset(float duration);
-	float GetRate() const { return time / duration; }
+	[[nodiscard]]
+	float GetRate() const noexcept { return time / duration; }
 	virtual void Draw(class RenderQueue& rq) = 0;
 	virtual void Tick(float deltaTime);
 
@@ -30,7 +31,8 @@ struct ButtonHitEffect : TimedEffect
 	void Draw(class RenderQueue& rq) override;
 	void Tick(float deltaTime) override;
 	void Reset(int buttonCode, Color color, bool hold);
-	float GetRate() const { return Math::Min(time, hitEffectDuration) / duration; }
+	[[nodiscard]]
+	float GetRate() const noexcept { return Math::Min(time, hitEffectDuration) / duration; }
 
 	uint32 buttonCode; // Only used for Draw
 	Color color;
@@ -112,6 +114,7 @@ public:
 	void DrawTrackCover(RenderQueue& rq);
 	void DrawCalibrationCritLine(RenderQueue& rq);
 
+	[[nodiscard]]
 	Vector3 TransformPoint(const Vector3& p);
 
 	// Adds a sprite effect to the track
@@ -122,9 +125,11 @@ public:
 	void SetViewRange(float newRange);
 	void SendLaserAlert(uint8 laserIdx);
 	void SetLaneHide(bool hidden, double duration);
+	[[nodiscard]]
 	float GetViewRange() const;
 
 	// Normal/FX button X-axis placement
+	[[nodiscard]]
 	float GetButtonPlacement(uint32 buttonIdx);
 
     void OnHoldEnter(Input::Button buttonCode);
