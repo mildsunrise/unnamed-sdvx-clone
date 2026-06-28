@@ -26,7 +26,7 @@ jobs:
                 .\bootstrap-vcpkg.bat
                 }
             - name: cmake
-              run: cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Visual Studio 17 2022" -A x64 .
+              run: cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -G "Visual Studio 18 2026" -A x64 .
             - name: Setup MSBuild.exe
               uses: microsoft/Setup-MSBuild@v1.0.2
             - name: MSBuild
