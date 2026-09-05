@@ -36,6 +36,7 @@ DefineEnum(GameConfigKeys,
 		   LogLevel,
 
 		   // Game settings
+		   HitWindowSCritical,
 		   HitWindowPerfect,
 		   HitWindowGood,
 		   HitWindowHold,

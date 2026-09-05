@@ -959,6 +959,7 @@ void MultiplayerScreen::SendFinalScore(class Game* game, ClearMark clearState)
 	packet["miss"] = scoring.categorizedHits[0];
 	packet["near"] = scoring.categorizedHits[1];
 	packet["crit"] = scoring.categorizedHits[2];
+	packet["scrit"] = scoring.categorizedHits[3];
 
 	packet["gauge_type"] = (uint32)gauge->GetType();
 	packet["gauge_option"] = gauge->GetOpts();

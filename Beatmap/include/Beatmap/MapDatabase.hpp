@@ -5,7 +5,7 @@
 
 struct SimpleHitStat
 {
-	// 0 = miss, 1 = near, 2 = crit, 3 = idle
+	// 0 = miss, 1 = near, 2 = crit, 3 = s-crit, 4 = idle
 	uint8 rating:3;
 	uint8 type:5; // We use this to save info about a tick
 	uint8 lane;
@@ -24,6 +24,7 @@ struct ScoreIndex
 {
 	int32 id;
 	int32 score;
+	int32 scrit;
 	int32 crit;
 	int32 almost;
 	int32 early;
@@ -43,6 +44,7 @@ struct ScoreIndex
 	String userId;
 	bool localScore;
 
+	int32 hitWindowSCritical;
 	int32 hitWindowPerfect;
 	int32 hitWindowGood;
 	int32 hitWindowHold;

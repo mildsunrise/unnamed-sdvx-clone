@@ -29,7 +29,7 @@ The following fields are available under the ``gameplay`` table:
     ScoreReplay[] scoreReplays //Array of previous scores for the current song
     CritLine critLine // info about crit line and everything attached to it
     
-    HitWindow hitWindow // This may be absent (== nil) for the default timing window (46 / 92 / 138 / 250ms)
+    HitWindow hitWindow // This may be absent (== nil) for the default timing window (16 / 46 / 92 / 138 / 250ms)
     bool multiplayer
     // Multiplayer only, absent (== nil) in non-multiplay
     string user_id
@@ -120,6 +120,7 @@ A ``HitWindow`` contains the following fields:
 .. code-block:: c
 
     int type // 0: expand-judge, 1: normal, 2: hard
+    int scritical
     int perfect
     int good
     int hold
@@ -154,7 +155,8 @@ Can be used for a number of things, such as starting custom hit animations or mo
     0 = Miss
     1 = Near
     2 = Crit
-    3 = Idle
+    3 = S-Crit
+    4 = Idle
 
 Idle and Miss are special cases that do not have any delta (delta always 0). Idle is triggered when the player
 hits the button when there is no note object in range on that lane.
@@ -261,6 +263,7 @@ practice_end_run(playCount, successCount, isSuccessful, scoring)
 .. code-block:: c
 
     int score
+    int scriticals
     int perfects
     int goods
     int misses

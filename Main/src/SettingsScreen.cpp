@@ -507,10 +507,24 @@ private:
 	{
 		LayoutRowDynamic(3);
 
+		const int hitWindowSCritical = IntInput(m_hitWindow.scritical, "S-Crit", 0, HitWindow::NORMAL.scritical);
+		if (hitWindowSCritical != m_hitWindow.scritical)
+		{
+			m_hitWindow.scritical = hitWindowSCritical;
+			if (m_hitWindow.perfect < m_hitWindow.scritical)
+				m_hitWindow.perfect = m_hitWindow.scritical;
+			if (m_hitWindow.good < m_hitWindow.scritical)
+				m_hitWindow.good = m_hitWindow.scritical;
+			if (m_hitWindow.hold < m_hitWindow.scritical)
+				m_hitWindow.hold = m_hitWindow.scritical;
+		}
+
 		const int hitWindowPerfect = IntInput(m_hitWindow.perfect, "Crit", 0, HitWindow::NORMAL.perfect);
 		if (hitWindowPerfect != m_hitWindow.perfect)
 		{
 			m_hitWindow.perfect = hitWindowPerfect;
+			if (m_hitWindow.perfect < m_hitWindow.scritical)
+				m_hitWindow.scritical = m_hitWindow.perfect;
 			if (m_hitWindow.good < m_hitWindow.perfect)
 				m_hitWindow.good = m_hitWindow.perfect;
 			if (m_hitWindow.hold < m_hitWindow.perfect)
@@ -521,6 +535,8 @@ private:
 		if (hitWindowGood != m_hitWindow.good)
 		{
 			m_hitWindow.good = hitWindowGood;
+			if (m_hitWindow.good < m_hitWindow.scritical)
+				m_hitWindow.scritical = m_hitWindow.good;
 			if (m_hitWindow.good < m_hitWindow.perfect)
 				m_hitWindow.perfect = m_hitWindow.good;
 			if (m_hitWindow.hold < m_hitWindow.good)
@@ -531,6 +547,8 @@ private:
 		if (hitWindowHold != m_hitWindow.hold)
 		{
 			m_hitWindow.hold = hitWindowHold;
+			if (m_hitWindow.hold < m_hitWindow.scritical)
+				m_hitWindow.scritical = m_hitWindow.hold;
 			if (m_hitWindow.hold < m_hitWindow.perfect)
 				m_hitWindow.perfect = m_hitWindow.hold;
 			if (m_hitWindow.hold < m_hitWindow.good)

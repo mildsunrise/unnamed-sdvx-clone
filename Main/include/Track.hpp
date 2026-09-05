@@ -86,8 +86,9 @@ public:
 	// 0 = Miss
 	// 1 = Good
 	// 2 = Perfect
-	// 3 = Idle
-	Color hitColors[4] = {};
+	// 3 = S-Critical
+	// 4 = Idle
+	Color hitColors[5] = {};
 
 	class AsyncAssetLoader* loader = nullptr;
 
@@ -191,7 +192,7 @@ public:
 
 	/* Scoring and feedback elements */
 	Texture scoreHitTexture;
-	Texture scoreHitTextures[3]; // Ok, Miss, Perfect
+	Texture scoreHitTextures[4]; // Ok, Miss, Perfect, SCritical
 	// Combo counter sprite sheet
 	Mesh comboSpriteMeshes[10];
 	/* Reusable sprite mesh and material */

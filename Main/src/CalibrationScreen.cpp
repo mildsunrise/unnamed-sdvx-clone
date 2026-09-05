@@ -263,14 +263,17 @@ void CalibrationScreen::m_OnButtonPressed(Input::Button buttonCode, int32 delta)
 		// TODO: use HitWindow based on current setting
 		HitWindow hitWindow = HitWindow::NORMAL;
 
-		if (hitDelta <= hitWindow.perfect) {
+		if (hitDelta <= hitWindow.scritical) {
+			m_track.AddHitEffect((int)buttonCode, m_track.hitColors[3]);
+		}
+		else if (hitDelta <= hitWindow.perfect) {
 			m_track.AddHitEffect((int)buttonCode, m_track.hitColors[2]);
 		}
 		else if (hitDelta <= hitWindow.good) {
 			m_track.AddHitEffect((int)buttonCode, m_track.hitColors[1]);
 		}
 		else {
-			m_track.AddHitEffect((int)buttonCode, m_track.hitColors[3]);
+			m_track.AddHitEffect((int)buttonCode, m_track.hitColors[4]);
 		}
 
 	}

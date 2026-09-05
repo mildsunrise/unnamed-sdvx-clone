@@ -7,6 +7,7 @@ static void PopulateScoreJSON(nlohmann::json& json, const ScoreIndex& score, con
 {
     json["score"] = {
         {"score", score.score},
+        {"scrit", score.scrit},
         {"crit", score.crit},
         {"near", score.almost},
         {"early", score.early},
@@ -23,6 +24,7 @@ static void PopulateScoreJSON(nlohmann::json& json, const ScoreIndex& score, con
         }},
         {"timestamp", score.timestamp},
         {"windows", {
+            {"scritical", score.hitWindowSCritical},
             {"perfect", score.hitWindowPerfect},
             {"good", score.hitWindowGood},
             {"hold", score.hitWindowHold},

@@ -2,10 +2,10 @@
 #include "HitStat.hpp"
 #include "GameConfig.hpp"
 
-const HitWindow HitWindow::NORMAL = HitWindow(46, 150);
+const HitWindow HitWindow::NORMAL = HitWindow(16, 46, 150);
 
 // The intention is that hard UC should be equivalent to normal PUC
-const HitWindow HitWindow::HARD = HitWindow(23, HitWindow::NORMAL.perfect);
+const HitWindow HitWindow::HARD = HitWindow(8, 23, HitWindow::NORMAL.perfect);
 
 HitStat::HitStat(ObjectState* object) : object(object)
 {
@@ -19,6 +19,7 @@ bool HitStat::operator<(const HitStat& other)
 HitWindow HitWindow::FromConfig()
 {
 	HitWindow hitWindow = HitWindow(
+		g_gameConfig.GetInt(GameConfigKeys::HitWindowSCritical),
 		g_gameConfig.GetInt(GameConfigKeys::HitWindowPerfect),
 		g_gameConfig.GetInt(GameConfigKeys::HitWindowGood),
 		g_gameConfig.GetInt(GameConfigKeys::HitWindowHold),
@@ -37,6 +38,7 @@ HitWindow HitWindow::FromConfig()
 
 void HitWindow::SaveConfig() const
 {
+	g_gameConfig.Set(GameConfigKeys::HitWindowSCritical, scritical);
 	g_gameConfig.Set(GameConfigKeys::HitWindowPerfect, perfect);
 	g_gameConfig.Set(GameConfigKeys::HitWindowGood, good);
 	g_gameConfig.Set(GameConfigKeys::HitWindowHold, hold);
@@ -54,6 +56,7 @@ void HitWindow::ToLuaTable(lua_State* L) const
 
 	lua_newtable(L);
 	pushIntToTable("type", static_cast<int>(GetType()));
+	pushIntToTable("scritical", scritical);
 	pushIntToTable("perfect", perfect);
 	pushIntToTable("good", good);
 	pushIntToTable("hold", hold);

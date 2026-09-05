@@ -52,8 +52,8 @@ bool Track::AsyncLoad()
 	// Load hit effect colors
 	Image hitColorPalette;
 	CheckedLoad(hitColorPalette = ImageRes::Create(Path::Absolute("skins/" + skin + "/textures/hitcolors.png")));
-	assert(hitColorPalette->GetSize().x >= 4);
-	for(uint32 i = 0; i < 4; i++)
+	assert(hitColorPalette->GetSize().x >= 5);
+	for(uint32 i = 0; i < 5; i++)
 		hitColors[i] = hitColorPalette->GetBits()[i];
 
 	// mip-mapped and anisotropicaly filtered track textures
@@ -64,7 +64,7 @@ bool Track::AsyncLoad()
 	loader->AddTexture(scoreHitTexture, "scorehit.png");
 
 
-	for(uint32 i = 0; i < 3; i++)
+	for(uint32 i = 0; i < 4; i++)
 	{
 		loader->AddTexture(scoreHitTextures[i], Utility::Sprintf("score%d.png", i));
 	}

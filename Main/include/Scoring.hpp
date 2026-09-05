@@ -196,6 +196,8 @@ public:
 	[[nodiscard]]
 	inline uint32 GetPerfects() const noexcept { return categorizedHits[2]; }
 	[[nodiscard]]
+	inline uint32 GetSCriticals() const noexcept { return categorizedHits[3]; }
+	[[nodiscard]]
 	inline bool IsPerfect() const noexcept { return GetMisses() == 0 && GetGoods() == 0; }
 	[[nodiscard]]
 	inline bool IsFullCombo() const noexcept { return GetMisses() == 0; }
@@ -250,7 +252,8 @@ public:
 	//	0 = Miss
 	//	1 = Good
 	//	2 = Perfect
-	uint32 categorizedHits[3] = { 0 };
+	//  3 = S-Critical
+	uint32 categorizedHits[4] = { 0 };
 
 	// Early and Late count:
 	// 0 = Early

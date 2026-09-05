@@ -37,6 +37,12 @@ struct ReplayJudgement
 		stat.hold = (GetType() == HitStatType::Hold) ? 1 : 0;
 		stat.holdMax = stat.hold;
 	}
+	inline static uint8 FromLegacyRating(uint8 rating) {
+		return rating <= 2 ? rating : rating + 1;
+	}
+	inline static uint8 ToLegacyRating(uint8 rating) {
+		return rating <= 3 ? Math::Min(rating, uint8(2)) : rating - 1;
+	}
 };
 
 static_assert(sizeof(ReplayJudgement) == 8);
@@ -104,9 +110,10 @@ struct ReplayChartInfo : ForwardCompatStruct<1>
 	}
 };
 
-struct ReplayScoreInfo : ForwardCompatStruct<2>
+struct ReplayScoreInfo : ForwardCompatStruct<3>
 {
 	int32 score;
+	int32 scrit; // -1 means unknown, i.e. play happened before s-criticals were supported, so they were counted as criticals
 	int32 crit;
 	int32 almost;
 	int32 miss;
@@ -123,14 +130,19 @@ struct ReplayScoreInfo : ForwardCompatStruct<2>
 	uint32 maxHitScore = 0;
 	ReplayScoreInfo() = default;
 	ReplayScoreInfo(const ScoreIndex* s) :
-		score(s->score), crit(s->crit), almost(s->almost), miss(s->miss),
+		score(s->score), scrit(s->scrit), crit(s->crit), almost(s->almost), miss(s->miss),
 		gauge(s->gauge), gaugeType(s->gaugeType), gaugeOption(s->gaugeOption),
 		random(s->random), mirror(s->mirror),
 		timestamp(s->timestamp), userName(s->userName), userId(s->userId) {};
 	static bool StaticSerialize(BinaryStream& stream, ReplayScoreInfo*& t)
 	{
 		if (!t->Version(stream)) return false;
-		stream << t->score << t->crit << t->almost << t->miss << t->gauge <<
+		stream << t->score;
+		if (t->version >= 3)
+			stream << t->scrit;
+		else
+			t->scrit = -1;
+		stream << t->crit << t->almost << t->miss << t->gauge <<
 			t->gaugeType << t->gaugeOption << t->random << t->mirror;
 		if (t->version >= 2)
 		{
@@ -147,7 +159,7 @@ struct ReplayInput
 	uint16 a;
 };
 
-#define REPLAY_VERSION 1
+#define REPLAY_VERSION 2
 #define REPLAY_MAGIC 0x52435355u
 #define COMPRESSED_REPLAY_MAGIC 0x504d4f43u
 class Replay

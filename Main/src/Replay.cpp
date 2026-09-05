@@ -62,11 +62,13 @@ bool Replay::SerializeLegacy(BinaryStream& stream, Replay*& obj)
 		return false;
 	for (auto& l : legacy)
 	{
+		l.rating = ReplayJudgement::FromLegacyRating(l.rating);
 		obj->m_judgementEvents.push_back(l);
 	}
 
 	// If we have an old legacy replay it will use the old hitwindows
 	//https://github.com/Drewol/unnamed-sdvx-clone/blob/ae736ebd0d497ea1004e07941fbe43ab9c86d5aa/Main/src/Scoring.cpp#L7
+	obj->m_hitWindow.scritical = 0;
 	if (!stream.Serialize(&(obj->m_hitWindow.perfect), 4))
 		obj->m_hitWindow.perfect = 46;
 	if (!stream.Serialize(&(obj->m_hitWindow.good), 4))
@@ -174,6 +176,7 @@ bool Replay::StaticSerialize(BinaryStream& stream, Replay*& obj)
 	if (!ReplayScoreInfo::StaticSerialize(stream, si))
 		return false;
 
+	obj->m_hitWindow._version = version;
 	stream << obj->m_hitWindow;
 
 	auto* oi = &obj->m_offsets;
@@ -188,6 +191,13 @@ bool Replay::StaticSerialize(BinaryStream& stream, Replay*& obj)
 
 	if (isRead && stream.IsOk())
 		obj->m_initialized = true;
+
+	if (version == 1) {
+		for (auto& j : obj->m_judgementEvents) {
+			j.rating = ReplayJudgement::FromLegacyRating(j.rating);
+		}
+		version = 2;
+	}
 
 	return stream.IsOk();
 }
@@ -218,10 +228,10 @@ void Replay::UpdateToTime(MapTime lastTime)
 				j->time, j->lane, j->delta, j->rating
 			);
 		}
-		else if (j->rating < 3)
+		else if (j->rating < 4)
 		{
 			m_currentMaxScore += 2;
-			m_currentScore += j->rating;
+			m_currentScore += Math::Min(int32(j->rating), 2);
 		}
 	}
 	m_lastEvalTime = lastTime;
@@ -271,10 +281,10 @@ const ReplayJudgement* Replay::PopNextJudgement(int lane, bool score)
 
 	auto* ret = q.front();
 	q.pop_front();
-	if (score && ret->rating < 3)
+	if (score && ret->rating < 4)
 	{
 		m_currentMaxScore += 2;
-		m_currentScore += ret->rating;
+		m_currentScore += Math::Min(int32(ret->rating), 2);
 	}
 	return ret;
 }
@@ -282,6 +292,7 @@ const ReplayJudgement* Replay::PopNextJudgement(int lane, bool score)
 bool ReplayScoreInfo::MatchesScore(const ScoreIndex* s)
 {
 	if (s->score != this->score
+		|| s->scrit != this->scrit
 		|| s->crit != this->crit
 		|| s->almost != this->almost
 		|| s->miss != this->miss

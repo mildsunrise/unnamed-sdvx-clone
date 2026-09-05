@@ -312,6 +312,9 @@ public:
 		else if (IsChallenge())
 		{
 			m_hitWindow = HitWindow(
+				m_challengeManager->GetCurrentOptions().scrit_judge.Get(
+					g_gameConfig.GetInt(GameConfigKeys::HitWindowSCritical)
+				),
 				m_challengeManager->GetCurrentOptions().crit_judge.Get(
 					g_gameConfig.GetInt(GameConfigKeys::HitWindowPerfect)
 				),
@@ -1764,6 +1767,10 @@ public:
 				lua_pushinteger(m_lua, m_scoring.CalculateCurrentDisplayScore());
 				lua_settable(m_lua, -3);
 
+				lua_pushstring(m_lua, "scriticals");
+				lua_pushinteger(m_lua, m_scoring.GetSCriticals());
+				lua_settable(m_lua, -3);
+
 				lua_pushstring(m_lua, "perfects");
 				lua_pushinteger(m_lua, m_scoring.GetPerfects());
 				lua_settable(m_lua, -3);
@@ -2116,6 +2123,7 @@ public:
 				Color::Red,
 				Color::Yellow,
 				Color::Green,
+				Color::Cyan,
 			};
 			Color c = hitColors[(size_t)(*it)->rating];
 			if((*it)->hasMissed && (*it)->hold > 0)
@@ -2692,6 +2700,7 @@ public:
 		scoreData.late = m_scoring.timedHits[1];
 		scoreData.combo = m_scoring.maxComboCounter;
 		scoreData.crit = m_scoring.categorizedHits[2];
+		scoreData.scrit = m_scoring.categorizedHits[3];
 		scoreData.gaugeType = g->GetType();
 		scoreData.gaugeOption = g->GetOpts();
 		scoreData.mirror = opts.mirror;
@@ -3557,13 +3566,14 @@ public:
 					pushStringToTable("uid", score->userId);
 
 					pushIntToTable("score", score->score);
+					pushIntToTable("scriticals", score->scrit);
 					pushIntToTable("perfects", score->crit);
 					pushIntToTable("goods", score->almost);
 					pushIntToTable("misses", score->miss);
 					pushIntToTable("timestamp", score->timestamp);
 					pushIntToTable("badge", static_cast<int>(Scoring::CalculateBadge(*score)));
 					lua_pushstring(L, "hitWindow");
-					HitWindow(score->hitWindowPerfect, score->hitWindowGood, score->hitWindowHold, score->hitWindowSlam).ToLuaTable(L);
+					HitWindow(score->hitWindowSCritical, score->hitWindowPerfect, score->hitWindowGood, score->hitWindowHold, score->hitWindowSlam).ToLuaTable(L);
 					lua_settable(L, -3);
 				}
 				else if (m_replayForPlayback->GetScoreInfo().IsInitialized())
@@ -3585,6 +3595,7 @@ public:
 					pushStringToTable("uid", score.userId);
 
 					pushIntToTable("score", score.score);
+					pushIntToTable("scriticals", score.scrit);
 					pushIntToTable("perfects", score.crit);
 					pushIntToTable("goods", score.almost);
 					pushIntToTable("misses", score.miss);

@@ -38,7 +38,7 @@ private:
 	uint32 m_hitScore;
 	uint32 m_maxHitScore;
 	uint32 m_maxCombo;
-	uint32 m_categorizedHits[3];
+	uint32 m_categorizedHits[4];
 	float m_finalGaugeValue;
 	std::array<float, 256> m_gaugeSamples;
 	String m_jacketPath;
@@ -193,6 +193,7 @@ private:
 		lua_pushinteger(m_lua, i);
 		lua_newtable(m_lua);
 		m_PushIntToTable("score", score["score"]);
+		m_PushIntToTable("scrit", score["scrit"]);
 		m_PushIntToTable("crit", score["crit"]);
 		m_PushIntToTable("near", score["near"]);
 		m_PushIntToTable("error", score["error"]);
@@ -221,11 +222,16 @@ private:
 
 		if (g_gameConfig.GetBool(GameConfigKeys::UseLegacyReplay))
 		{
+			Vector<SimpleHitStat> legacy;
+			for (SimpleHitStat stat : m_simpleHitStats) {
+				stat.rating = ReplayJudgement::ToLegacyRating(stat.rating);
+				legacy.push_back(stat);
+			}
 			File replayFile;
 			if (replayFile.OpenWrite(m_replayPath))
 			{
 				FileWriter fw(replayFile);
-				fw.SerializeObject(m_simpleHitStats);
+				fw.SerializeObject(legacy);
 				fw.Serialize(&(m_hitWindow.perfect), 4);
 				fw.Serialize(&(m_hitWindow.good), 4);
 				fw.Serialize(&(m_hitWindow.hold), 4);
@@ -318,6 +324,7 @@ private:
 		}
 
 		newScore->score = m_score;
+		newScore->scrit = m_categorizedHits[3];
 		newScore->crit = m_categorizedHits[2];
 		newScore->almost = m_categorizedHits[1];
 		newScore->early = m_timedHits[0];
@@ -338,6 +345,7 @@ private:
 		newScore->userName = g_gameConfig.GetString(GameConfigKeys::MultiplayerUsername);
 		newScore->localScore = true;
 
+		newScore->hitWindowSCritical = m_hitWindow.scritical;
 		newScore->hitWindowPerfect = m_hitWindow.perfect;
 		newScore->hitWindowGood = m_hitWindow.good;
 		newScore->hitWindowHold = m_hitWindow.hold;
@@ -465,6 +473,7 @@ public:
 		m_options = game->GetPlaybackOptions();
 		m_scoredata.score = m_score;
 		memcpy(m_categorizedHits, scoring.categorizedHits, sizeof(scoring.categorizedHits));
+		m_scoredata.scrit = m_categorizedHits[3];
 		m_scoredata.crit = m_categorizedHits[2];
 		m_scoredata.almost = m_categorizedHits[1];
 		m_scoredata.early = m_timedHits[0];
@@ -526,6 +535,7 @@ public:
 		m_categorizedHits[2] = data["crit"];
 
 		m_scoredata.score = data["score"];
+		m_scoredata.scrit = m_categorizedHits[3];
 		m_scoredata.crit = m_categorizedHits[2];
 		m_scoredata.almost = m_categorizedHits[1];
 		m_scoredata.early = m_timedHits[0];
@@ -788,6 +798,7 @@ public:
 		m_PushIntToTable("misses", m_categorizedHits[0]);
 		m_PushIntToTable("goods", m_categorizedHits[1]);
 		m_PushIntToTable("perfects", m_categorizedHits[2]);
+		m_PushIntToTable("scriticals", m_categorizedHits[3]);
 		m_PushIntToTable("maxCombo", m_maxCombo);
 		m_PushIntToTable("level", m_beatmapSettings.level);
 		m_PushIntToTable("difficulty", m_beatmapSettings.difficulty);
@@ -876,6 +887,7 @@ public:
 				m_PushFloatToTable("gauge", score["gauge"]);
 				m_PushIntToTable("flags", score["flags"]);
 				m_PushIntToTable("score", score["score"]);
+				m_PushIntToTable("scriticals", score["scrit"]);
 				m_PushIntToTable("perfects", score["crit"]);
 				m_PushIntToTable("goods", score["near"]);
 				m_PushIntToTable("misses", score["miss"]);
@@ -906,6 +918,7 @@ public:
 				m_PushIntToTable("auto_flags", (uint32)score->autoFlags);
 
 				m_PushIntToTable("score", score->score);
+				m_PushIntToTable("scriticals", score->scrit);
 				m_PushIntToTable("perfects", score->crit);
 				m_PushIntToTable("goods", score->almost);
 				m_PushIntToTable("earlies", score->early);
@@ -915,7 +928,7 @@ public:
 				m_PushIntToTable("timestamp", score->timestamp);
 				m_PushIntToTable("badge", static_cast<int>(Scoring::CalculateBadge(*score)));
 				lua_pushstring(m_lua, "hitWindow");
-				HitWindow(score->hitWindowPerfect, score->hitWindowGood, score->hitWindowHold, score->hitWindowSlam).ToLuaTable(m_lua);
+				HitWindow(score->hitWindowSCritical, score->hitWindowPerfect, score->hitWindowGood, score->hitWindowHold, score->hitWindowSlam).ToLuaTable(m_lua);
 				lua_settable(m_lua, -3);
 				lua_settable(m_lua, -3);
 			}

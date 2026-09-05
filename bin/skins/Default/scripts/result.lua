@@ -47,9 +47,11 @@ local hitHistogram = {}
 local hitMinDelta = 0
 local hitMaxDelta = 0
 
+local NORMAL_HIT_WINDOW_SCRITICAL = 16
 local NORMAL_HIT_WINDOW_PERFECT = 46
 local NORMAL_HIT_WINDOW_GOOD = 150
 
+local hitWindowSCritical = NORMAL_HIT_WINDOW_SCRITICAL
 local hitWindowPerfect = NORMAL_HIT_WINDOW_PERFECT
 local hitWindowGood = NORMAL_HIT_WINDOW_GOOD
 
@@ -289,16 +291,20 @@ result_set = function()
 
     hasHitStat = result.noteHitStats ~= nil and #result.noteHitStats > 0
 
+    hitWindowSCritical = NORMAL_HIT_WINDOW_SCRITICAL
     hitWindowPerfect = NORMAL_HIT_WINDOW_PERFECT
     hitWindowGood = NORMAL_HIT_WINDOW_GOOD
+    scritText = "S-CRIT"
     critText = "CRIT"
     nearText = "NEAR"
 
     if result.hitWindow ~= nil then
+        hitWindowSCritical = result.hitWindow.scritical
         hitWindowPerfect = result.hitWindow.perfect
         hitWindowGood = result.hitWindow.good
 
-        if hitWindowPerfect ~= NORMAL_HIT_WINDOW_PERFECT or hitWindowGood ~= NORMAL_HIT_WINDOW_GOOD then
+        if hitWindowSCritical ~= NORMAL_HIT_WINDOW_SCRITICAL or hitWindowPerfect ~= NORMAL_HIT_WINDOW_PERFECT or hitWindowGood ~= NORMAL_HIT_WINDOW_GOOD then
+            scritText = string.format("%02dms S-CRIT", hitWindowSCritical)
             critText = string.format("%02dms CRIT", hitWindowPerfect)
             nearText = string.format("%02dms NEAR", hitWindowGood)
         end
@@ -309,7 +315,7 @@ result_set = function()
     if hasHitStat then
         for i = 1, #result.noteHitStats do
             local hitStat = result.noteHitStats[i]
-            if hitStat.rating == 1 or hitStat.rating == 2 then
+            if hitStat.rating >= 1 and hitStat.rating <= 3 then
                 if hitHistogram[hitStat.delta] == nil then hitHistogram[hitStat.delta] = 0 end
                 hitHistogram[hitStat.delta] = hitHistogram[hitStat.delta] + 1
 
@@ -980,7 +986,7 @@ draw_chart_info = function(x, y, w, h, full)
 
     if not full then
         jacket_y = y
-        jacket_size = 300
+        jacket_size = 270
     end
 
     local jacket_x = x+(w-jacket_size)/2
@@ -1171,6 +1177,7 @@ draw_basic_hitstat = function(x, y, w, h, full)
 
     gfx.FillColor(255, 255, 255)
 
+    stat_y = draw_stat(x+4, stat_y, stat_width, stat_size, scritText, result.scriticals, "%d", 0, 235, 225)
     stat_y = draw_stat(x+4, stat_y, stat_width, stat_size, critText, result.perfects, "%d", 255, 150, 0)
     stat_y = draw_stat(x+4, stat_y, stat_width, stat_size, nearText, result.goods, "%d", 255, 0, 200)
 
@@ -1331,8 +1338,8 @@ render = function(deltaTime)
         draw_basic_hitstat(280, 120, 220, 420, true)
         draw_graphs(0, 540, 500, 210)
     else
-        draw_chart_info(0, 120, 500, 310, false)
-        draw_basic_hitstat(50, 430, 400, 400, false)
+        draw_chart_info(0, 120, 500, 280, false)
+        draw_basic_hitstat(50, 400, 400, 400, false)
     end
 
     if showGuide then

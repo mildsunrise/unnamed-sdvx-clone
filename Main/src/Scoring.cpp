@@ -257,6 +257,7 @@ void Scoring::SetScoreForReplay()
 
 	if (score)
 	{
+		categorizedHits[3] = score->scrit;
 		categorizedHits[2] = score->crit;
 		categorizedHits[1] = score->almost;
 		categorizedHits[1] = score->miss;
@@ -264,6 +265,7 @@ void Scoring::SetScoreForReplay()
 	}
 	else if (scoreInfo.IsInitialized())
 	{
+		categorizedHits[3] = scoreInfo.scrit;
 		categorizedHits[2] = scoreInfo.crit;
 		categorizedHits[1] = scoreInfo.almost;
 		categorizedHits[1] = scoreInfo.miss;
@@ -866,8 +868,8 @@ void Scoring::m_UpdateTicks()
 			m_replay->PopNextJudgement(buttonCode);
 			m_replayDebugInfo.missingTickCount++;
 			m_replayDebugInfo.judgementsProcessed++;
-			if (j->rating > 0 && j->rating <= 2)
-				m_AddScore(j->rating);
+			if (j->rating > 0 && j->rating <= 3)
+				m_AddScore(Math::Min((int32)j->rating, 2));
 			currentMaxScore += 2;
 		}
 		for (uint32 i = 0; i < ticks.size(); i++)
@@ -1239,7 +1241,7 @@ void Scoring::m_TickHit(ScoreTick* tick, uint32 index, MapTime delta /*= 0*/)
 				timedHits[1]++;
 
 		}
-		m_AddScore((uint32)stat->rating);
+		m_AddScore(Math::Min((int32)stat->rating, 2));
         autoplayInfo.buttonAnimationTimer[index] = AUTOPLAY_BUTTON_HIT_DURATION;
 	}
 	else if (tick->HasFlag(TickFlags::Hold))
@@ -1354,7 +1356,7 @@ void Scoring::m_UpdateGauges(ScoreHitRating rating, TickFlags flags)
 				g->NearHit();
 			}
 		}
-		else if (rating == ScoreHitRating::Perfect)
+		else if (rating == ScoreHitRating::Perfect || rating == ScoreHitRating::SCritical)
 		{
 			for (auto& g : m_gaugeStack)
 			{
@@ -1896,6 +1898,8 @@ ScoreHitRating ScoreTick::GetHitRatingFromDelta(const HitWindow& hitWindow, MapT
 	if (HasFlag(TickFlags::Button))
 	{
 		// Button hit judgeing
+		if (delta <= hitWindow.scritical)
+			return ScoreHitRating::SCritical;
 		if (delta <= hitWindow.perfect)
 			return ScoreHitRating::Perfect;
 		if (delta <= hitWindow.good)

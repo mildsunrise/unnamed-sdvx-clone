@@ -7,6 +7,7 @@ enum class ScoreHitRating
 	Miss = 0,
 	Good,
 	Perfect,
+	SCritical,
 	Idle, // Not actual score, used when a button is pressed when there are no notes
 };
 
@@ -37,39 +38,41 @@ struct HitWindow
 {
 	enum class Type { None = 0, Normal, Hard };
 
-	inline HitWindow(MapTime perfect, MapTime good) noexcept : perfect(perfect), good(good) { Validate(); }
-	inline HitWindow(MapTime perfect, MapTime good, MapTime hold, MapTime slam) noexcept : perfect(perfect), good(good), hold(hold), slam(slam) { Validate(); }
-	inline HitWindow(const HitWindow& that) noexcept : perfect(that.perfect), good(that.good), hold(that.hold), miss(that.miss), slam(that.slam) { Validate(); }
+	inline HitWindow(MapTime scritical, MapTime perfect, MapTime good) noexcept : scritical(scritical), perfect(perfect), good(good) { Validate(); }
+	inline HitWindow(MapTime scritical, MapTime perfect, MapTime good, MapTime hold, MapTime slam) noexcept : scritical(scritical), perfect(perfect), good(good), hold(hold), slam(slam) { Validate(); }
+	inline HitWindow(const HitWindow& that) noexcept : scritical(that.scritical), perfect(that.perfect), good(that.good), hold(that.hold), miss(that.miss), slam(that.slam) { Validate(); }
 
 	static HitWindow FromConfig();
 	void SaveConfig() const;
 
 	void ToLuaTable(struct lua_State* L) const;
 
-	inline HitWindow& operator= (const HitWindow& that) noexcept { perfect = that.perfect; good = that.good; hold = that.hold; miss = that.miss; slam = that.slam; return *this; }
+	inline HitWindow& operator= (const HitWindow& that) noexcept { scritical = that.scritical; perfect = that.perfect; good = that.good; hold = that.hold; miss = that.miss; slam = that.slam; return *this; }
 
-	constexpr bool operator== (const HitWindow& that) const noexcept { return perfect == that.perfect && good == that.good && hold == that.hold && miss == that.miss && slam == that.slam; }
-	constexpr bool operator<= (const HitWindow& that) const noexcept { return perfect <= that.perfect && good <= that.good && hold <= that.hold && miss <= that.miss && slam <= that.slam; }
+	constexpr bool operator== (const HitWindow& that) const noexcept { return scritical == that.scritical && perfect == that.perfect && good == that.good && hold == that.hold && miss == that.miss && slam == that.slam; }
+	constexpr bool operator<= (const HitWindow& that) const noexcept { return scritical <= that.scritical && perfect <= that.perfect && good <= that.good && hold <= that.hold && miss <= that.miss && slam <= that.slam; }
 
 	[[nodiscard]]
 	constexpr Type GetType() const noexcept { if (*this <= HARD) return Type::Hard; else if (*this <= NORMAL) return Type::Normal; else return Type::None; }
 
 	inline bool Validate()
 	{
-		if (perfect <= good && good <= hold && hold <= miss && slam <= NORMAL.slam && miss <= NORMAL.miss)
+		if (scritical <= perfect && perfect <= good && good <= hold && hold <= miss && slam <= NORMAL.slam && miss <= NORMAL.miss)
 			return true;
 
-		Logf("Invalid timing window: %d/%d/%d/%d/%d", Logger::Severity::Warning, perfect, good, hold, slam, miss);
+		Logf("Invalid timing window: %d/%d/%d/%d/%d/%d", Logger::Severity::Warning, scritical, perfect, good, hold, slam, miss);
 
 		if (miss > NORMAL.miss) miss = NORMAL.miss;
 		if (hold > miss) hold = miss;
 		if (good > hold) good = hold;
 		if (perfect > good) perfect = good;
+		if (scritical > perfect) scritical = perfect;
 		if (slam > NORMAL.slam) slam = NORMAL.slam;
 
 		return false;
 	}
 
+	MapTime scritical = 16;
 	MapTime perfect = 46;
 	MapTime good = 150;
 	MapTime hold = 150;
@@ -79,11 +82,17 @@ struct HitWindow
 	static const HitWindow NORMAL;
 	static const HitWindow HARD;
 
+	int _version; // FIXME: this should be passed by BinaryStream instead...
+
 	static bool StaticSerialize(BinaryStream& stream, HitWindow*& obj)
 	{
 		if (obj == nullptr)
 			return false;
 
+		if (obj->_version >= 2)
+			stream << obj->scritical;
+		else
+			obj->scritical = 0;
 		stream << obj->perfect;
 		stream << obj->good;
 		stream << obj->hold;

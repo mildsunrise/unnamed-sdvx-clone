@@ -118,7 +118,7 @@ void ButtonHitRatingEffect::Draw(class RenderQueue& rq)
 	uint32 on = 1;
 	if(rating == ScoreHitRating::Miss) // flicker
 		on = (uint32)floorf(GetRate() * 6.0f) % 2;
-	else if(rating == ScoreHitRating::Perfect)
+	else if(rating == ScoreHitRating::Perfect || rating == ScoreHitRating::SCritical)
 		iScale = cos(GetRate() * 12.0f) * 0.5f + 1.0f;
 
 	if(on == 1)

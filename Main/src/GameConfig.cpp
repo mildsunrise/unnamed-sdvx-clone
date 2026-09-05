@@ -74,6 +74,7 @@ void GameConfig::InitDefaults()
 	Set(GameConfigKeys::ForcePortrait, false);
 	Set(GameConfigKeys::SkipScore, true);
 
+	Set(GameConfigKeys::HitWindowSCritical, HitWindow::NORMAL.scritical);
 	Set(GameConfigKeys::HitWindowPerfect, HitWindow::NORMAL.perfect);
 	Set(GameConfigKeys::HitWindowGood, HitWindow::NORMAL.good);
 	Set(GameConfigKeys::HitWindowHold, HitWindow::NORMAL.hold);
@@ -343,6 +344,7 @@ void GameConfig::UpdateVersion()
 
 #define Key(v) static_cast<uint32>(GameConfigKeys::v)
 ConfigBase::KeyList GameConfigProfileSettings = {
+	Key(HitWindowSCritical),
 	Key(HitWindowPerfect),
 	Key(HitWindowGood),
 	Key(HitWindowHold),
