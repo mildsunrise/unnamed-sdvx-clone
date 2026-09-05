@@ -977,7 +977,7 @@ void Scoring::m_UpdateTicks()
 					m_TickHit(tick, buttonCode);
 					HitStat* stat = new HitStat(tick->object);
 					stat->time = tick->time;
-					stat->rating = ScoreHitRating::Perfect;
+					stat->rating = ScoreHitRating::SCritical;
 					hitStats.Add(stat);
 				}
 
@@ -1018,7 +1018,7 @@ void Scoring::m_UpdateTicks()
 							m_TickHit(tick, buttonCode);
 							HitStat* stat = new HitStat(tick->object);
 							stat->time = tick->time;
-							stat->rating = ScoreHitRating::Perfect;
+							stat->rating = ScoreHitRating::SCritical;
 							stat->hold = ((HoldObjectState*)tick->object)->duration;
 							hitStats.Add(stat);
 
@@ -1057,7 +1057,7 @@ void Scoring::m_UpdateTicks()
 							m_TickHit(tick, buttonCode);
 							HitStat* stat = new HitStat(tick->object);
 							stat->time = tick->time;
-							stat->rating = ScoreHitRating::Perfect;
+							stat->rating = ScoreHitRating::SCritical;
 							hitStats.Add(stat);
 							processed = true;
 						}
@@ -1080,7 +1080,7 @@ void Scoring::m_UpdateTicks()
 							m_TickHit(tick, buttonCode);
 							HitStat* stat = new HitStat(tick->object);
 							stat->time = tick->time;
-							stat->rating = ScoreHitRating::Perfect;
+							stat->rating = ScoreHitRating::SCritical;
 							hitStats.Add(stat);
 							processed = true;
 						}
@@ -1250,7 +1250,7 @@ void Scoring::m_TickHit(ScoreTick* tick, uint32 index, MapTime delta /*= 0*/)
 		if (hold->time + hold->duration > m_playback->GetLastTime()) // Only set active hold object if object hasn't passed yet
 			m_SetHoldObject(tick->object, index);
 
-		stat->rating = ScoreHitRating::Perfect;
+		stat->rating = ScoreHitRating::SCritical;
 		stat->hold++;
 		m_AddScore(2);
 	}
@@ -1269,7 +1269,7 @@ void Scoring::m_TickHit(ScoreTick* tick, uint32 index, MapTime delta /*= 0*/)
 
 		m_AddScore(2);
 
-		stat->rating = ScoreHitRating::Perfect;
+		stat->rating = ScoreHitRating::SCritical;
 		stat->hold++;
 	}
 	m_UpdateGauges(stat->rating, tick->flags);
@@ -1332,7 +1332,7 @@ void Scoring::m_UpdateGauges(ScoreHitRating rating, TickFlags flags)
 				g->LongMiss();
 			}
 		}
-		else if (rating == ScoreHitRating::Perfect)
+		else if (rating == ScoreHitRating::SCritical)
 		{
 			for (auto& g : m_gaugeStack)
 			{
@@ -1906,7 +1906,7 @@ ScoreHitRating ScoreTick::GetHitRatingFromDelta(const HitWindow& hitWindow, MapT
 			return ScoreHitRating::Good;
 		return ScoreHitRating::Miss;
 	}
-	return ScoreHitRating::Perfect;
+	return ScoreHitRating::SCritical;
 }
 
 bool ScoreTick::HasFlag(TickFlags flag) const
